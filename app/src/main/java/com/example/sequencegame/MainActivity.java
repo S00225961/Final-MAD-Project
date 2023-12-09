@@ -40,6 +40,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private List<String> sequence = new ArrayList<>();
     private List<String> playerSequence = new ArrayList<>();
     private int playerScore = 0;
+    private  //colours list
+    List<Integer> colors = Arrays.asList(
+            R.color.blue, R.color.red, R.color.yellow, R.color.orange,
+            R.color.black, R.color.white, R.color.cream, R.color.darkGreen, R.color.armyGreen,
+            R.color.pink, R.color.purple, R.color.teal, R.color.brown, R.color.indigo,
+            R.color.cyan, R.color.amber, R.color.lime, R.color.deepOrange, R.color.lightGreen,
+            R.color.deepPurple, R.color.lightRed, R.color.green, R.color.lightYellow,
+            R.color.lightPink
+    );
+    private List<Button> buttons = new ArrayList();
 
     //buttons
     @Override
@@ -55,44 +65,50 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SetRandomButtonColour();
+
+                //buttons
+                Button btn1 = findViewById(R.id.button);
+                Button btn2 = findViewById(R.id.button2);
+                Button btn3 = findViewById(R.id.button3);
+                Button btn4 = findViewById(R.id.button4);
+
+                buttons.add(btn1);
+                buttons.add(btn2);
+                buttons.add(btn3);
+                buttons.add(btn4);
+
+                //shuffling colours and location at the start only
+                Collections.shuffle(colors);
+                Collections.shuffle(buttons);
+
+                SetRandomButtonColour(colors, buttons);
             }
         });
     }
 
-    public void SetRandomButtonColour(){
-        //variables
-        int buttonCount = 0;
-        //colours list
-        List<Integer> colors = Arrays.asList(
-                R.color.blue, R.color.red, R.color.yellow, R.color.orange,
-                R.color.black, R.color.white, R.color.cream, R.color.darkGreen, R.color.armyGreen,
-                R.color.pink, R.color.purple, R.color.teal, R.color.brown, R.color.indigo,
-                R.color.cyan, R.color.amber, R.color.lime, R.color.deepOrange, R.color.lightGreen,
-                R.color.deepPurple, R.color.lightRed, R.color.green, R.color.lightYellow, R.color.lightCyan,
-                R.color.lightPink
-        );
-
+    public void SetRandomButtonColour(List<Integer> colors, List<Button> buttons){
         //buttons
         Button btn1 = findViewById(R.id.button);
         Button btn2 = findViewById(R.id.button2);
         Button btn3 = findViewById(R.id.button3);
         Button btn4 = findViewById(R.id.button4);
-        //shuffling
-        Collections.shuffle(colors);
-        List<Button> buttons = new ArrayList();
-        buttons.add(btn1);
-        buttons.add(btn2);
-        buttons.add(btn3);
-        buttons.add(btn4);
-        Collections.shuffle(buttons);
+
         // Showing colour sequence
         for (int i = 0; i < sequenceCount; i++) {
-            //resting button count
-            if(buttonCount == 3){
-                buttonCount = 0;
+            if(sequenceCount != 4){
+                //add two new buttons to the list from buttons 1 to 4
+                Random random = new Random();
+                for(int j = 0; j < 2; j++){
+                    int randomNumber = random.nextInt(4);
+                    switch(randomNumber){
+                        case 0: buttons.add(btn1); break;
+                        case 1: buttons.add(btn2); break;
+                        case 2: buttons.add(btn3); break;
+                        case 3: buttons.add(btn4); break;
+                    }
+                }
             }
-            Button button = buttons.get(buttonCount);
+            Button button = buttons.get(i);
             if(button.getId() == btn1.getId()){
                 sequence.add("left");
             }
@@ -108,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             else {
                 sequence.add("flat");
             }
-            buttonCount++;
 
             int color = colors.get(i);
 
@@ -203,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         sequenceCount += 2;
                         sequence.clear();
                         playerSequence.clear();
-                        SetRandomButtonColour();
+                        SetRandomButtonColour(colors, buttons);
                     } else {
                         Toast.makeText(this.getApplicationContext(), "wrong!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(MainActivity.this, GameOver.class);
